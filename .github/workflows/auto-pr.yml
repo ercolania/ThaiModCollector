@@ -33,9 +33,10 @@ jobs:
               core.setFailed("ข้อมูลไม่ถูกต้อง");
             }
 
-      - name: Update mods.json
+      - name: Update mods.json and Sort
         run: |
-          jq --arg id "${{ steps.extract.outputs.appId }}" \
+          jq --sort-keys \
+             --arg id "${{ steps.extract.outputs.appId }}" \
              --arg link "${{ steps.extract.outputs.link }}" \
              '.mods[$id] = $link | .last_updated = (now | strftime("%Y-%m-%dT%H:%M:%SZ"))' mods.json > tmp.json && mv tmp.json mods.json
 
