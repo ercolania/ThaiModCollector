@@ -9,8 +9,9 @@ permissions:
   issues: write
 
 jobs:
-  build:
-    if: contains(github.event.issue.labels.*.name, 'mod-submission')
+  process-mod:
+    # ทำงานเมื่อเป็นกระทู้เสนอม็อด หรือ แจ้งลิงก์เสีย เท่านั้น
+    if: contains(github.event.issue.labels.*.name, 'mod-submission') || contains(github.event.issue.labels.*.name, 'broken-link')
     runs-on: ubuntu-latest
 
     steps:
@@ -23,37 +24,41 @@ jobs:
         with:
           script: |
             const body = context.payload.issue.body;
-            // สกัดข้อมูล ชื่อเกม, App ID และลิงก์ดาวน์โหลด ด้วย Regex
             const gameMatch = body.match(/\*\*ชื่อเกม:\*\*\s*(.+)/);
             const appIdMatch = body.match(/\*\*App ID เกม:\*\*\s*(\d+)/);
             const linkMatch = body.match(/\*\*ลิงก์ดาวน์โหลด:\*\*\s*(https?:\/\/[^\s]+)/);
             
-            if (appIdMatch && linkMatch) {
+            if (appIdMatch) {
               core.setOutput('gameName', gameMatch ? gameMatch[1].trim() : "Unknown Game");
               core.setOutput('appId', appIdMatch[1]);
-              core.setOutput('link', linkMatch[1]);
+              core.setOutput('link', linkMatch ? linkMatch[1] : "none");
             } else {
-              core.setFailed("❌ ดึงข้อมูลจากข้อความใน Issue ไม่สำเร็จ โครงสร้างผิดพลาด");
+              core.setFailed("❌ ดึงข้อมูล App ID ไม่สำเร็จ");
             }
 
-      - name: Update mods.json and Sort Numerically
+      - name: Update mods.json (กรณีเพิ่มม็อดใหม่ ✨)
+        if: contains(github.event.issue.labels.*.name, 'mod-submission')
         run: |
-          # อัปเดตไฟล์พร้อมจัดเรียงแบบตัวเลขจากน้อยไปมากป้องกันข้อมูลกระจัดกระจาย
           jq --arg id "${{ steps.extract.outputs.appId }}" \
              --arg link "${{ steps.extract.outputs.link }}" \
              '.mods[$id] = $link | .mods |= (to_entries | sort_by(.key | tonumber) | from_entries) | .last_updated = (now | strftime("%Y-%m-%dT%H:%M:%SZ"))' mods.json > tmp.json && mv tmp.json mods.json
 
+      - name: Update mods.json (กรณีแจ้งลบลิงก์เสีย 🗑️)
+        if: contains(github.event.issue.labels.*.name, 'broken-link')
+        run: |
+          jq --arg id "${{ steps.extract.outputs.appId }}" \
+             'del(.mods[$id]) | .last_updated = (now | strftime("%Y-%m-%dT%H:%M:%SZ"))' mods.json > tmp.json && mv tmp.json mods.json
+
       - name: Create Pull Request 🚀
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}  # ใช้เซฟกุญแจลับ PAT ของคุณกันระบบบล็อก
-          commit-message: "Add mod for ${{ steps.extract.outputs.gameName }} (ID: ${{ steps.extract.outputs.appId }})"
-          branch: "add-mod-${{ steps.extract.outputs.appId }}"
-          title: "✨ อัปเดตม็อดใหม่: ${{ steps.extract.outputs.gameName }} (${{ steps.extract.outputs.appId }})"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Update mod for ${{ steps.extract.outputs.gameName }} (${{ steps.extract.outputs.appId }})"
+          branch: "update-mod-${{ steps.extract.outputs.appId }}"
+          title: "🤖 อัปเดตข้อมูลม็อด: ${{ steps.extract.outputs.gameName }} (${{ steps.extract.outputs.appId }})"
           body: |
-            ดึงข้อมูลอัตโนมัติจาก Issue #${{ github.event.issue.number }}
-            **เกม:** ${{ steps.extract.outputs.gameName }}
-            **ลิงก์ดาวน์โหลด:** ${{ steps.extract.outputs.link }}
+            สร้าง PR อัตโนมัติจาก Issue #${{ github.event.issue.number }}
+            กรุณาตรวจสอบความถูกต้องก่อนกด Merge
           labels: "mod-update"
 
       - name: Close Issue
