@@ -1,12 +1,11 @@
 name: Auto Purge jsDelivr Cache
 
-# จุดชนวน: ทำงานเมื่อมีการ Push หรือ Merge ไฟล์ลง branch 'main'
 on:
   push:
     branches:
       - main
     paths:
-      - 'mods.json' # ทำงานเฉพาะเมื่อไฟล์นี้มีการเปลี่ยนแปลงเท่านั้น
+      - 'mods.json'
 
 jobs:
   purge:
@@ -14,6 +13,10 @@ jobs:
     steps:
       - name: 🚀 Purge CDN Cache
         run: |
+          echo "⏳ รอให้เซิร์ฟเวอร์หลักของ GitHub อัปเดตไฟล์ (3 นาที)..."
+          sleep 180
+          
           echo "กำลังสั่งล้างแคชบน jsDelivr..."
           curl -s https://purge.jsdelivr.net/gh/ercolania/ThaiModCollector@main/mods.json
+          
           echo "ล้างแคชเรียบร้อย! ผู้ใช้จะได้ข้อมูลใหม่ทันที"
