@@ -46,7 +46,7 @@ jobs:
       - name: Create Pull Request 🚀
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.MY_PAT_TOKEN }}  # ใช้เซฟกุญแจลับ PAT ของคุณกันระบบบล็อก
+          token: ${{ secrets.GITHUB_TOKEN }}  # ใช้เซฟกุญแจลับ PAT ของคุณกันระบบบล็อก
           commit-message: "Add mod for ${{ steps.extract.outputs.gameName }} (ID: ${{ steps.extract.outputs.appId }})"
           branch: "add-mod-${{ steps.extract.outputs.appId }}"
           title: "✨ อัปเดตม็อดใหม่: ${{ steps.extract.outputs.gameName }} (${{ steps.extract.outputs.appId }})"
