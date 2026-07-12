@@ -17,36 +17,43 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Extract Data
+      - name: Extract Data From Issue
         id: extract
         uses: actions/github-script@v7
         with:
           script: |
             const body = context.payload.issue.body;
+            // สกัดข้อมูล ชื่อเกม, App ID และลิงก์ดาวน์โหลด ด้วย Regex
+            const gameMatch = body.match(/\*\*ชื่อเกม:\*\*\s*(.+)/);
             const appIdMatch = body.match(/\*\*App ID เกม:\*\*\s*(\d+)/);
             const linkMatch = body.match(/\*\*ลิงก์ดาวน์โหลด:\*\*\s*(https?:\/\/[^\s]+)/);
             
             if (appIdMatch && linkMatch) {
+              core.setOutput('gameName', gameMatch ? gameMatch[1].trim() : "Unknown Game");
               core.setOutput('appId', appIdMatch[1]);
               core.setOutput('link', linkMatch[1]);
             } else {
-              core.setFailed("ข้อมูลไม่ถูกต้อง");
+              core.setFailed("❌ ดึงข้อมูลจากข้อความใน Issue ไม่สำเร็จ โครงสร้างผิดพลาด");
             }
 
       - name: Update mods.json and Sort Numerically
         run: |
+          # อัปเดตไฟล์พร้อมจัดเรียงแบบตัวเลขจากน้อยไปมากป้องกันข้อมูลกระจัดกระจาย
           jq --arg id "${{ steps.extract.outputs.appId }}" \
              --arg link "${{ steps.extract.outputs.link }}" \
              '.mods[$id] = $link | .mods |= (to_entries | sort_by(.key | tonumber) | from_entries) | .last_updated = (now | strftime("%Y-%m-%dT%H:%M:%SZ"))' mods.json > tmp.json && mv tmp.json mods.json
 
-      - name: Create PR
+      - name: Create Pull Request 🚀
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Add mod for App ID ${{ steps.extract.outputs.appId }}"
+          token: ${{ secrets.MY_PAT_TOKEN }}  # ใช้เซฟกุญแจลับ PAT ของคุณกันระบบบล็อก
+          commit-message: "Add mod for ${{ steps.extract.outputs.gameName }} (ID: ${{ steps.extract.outputs.appId }})"
           branch: "add-mod-${{ steps.extract.outputs.appId }}"
-          title: "✨ อัปเดตม็อด: App ID ${{ steps.extract.outputs.appId }}"
-          body: "ดึงข้อมูลจาก Issue #${{ github.event.issue.number }}\nลิงก์: ${{ steps.extract.outputs.link }}"
+          title: "✨ อัปเดตม็อดใหม่: ${{ steps.extract.outputs.gameName }} (${{ steps.extract.outputs.appId }})"
+          body: |
+            ดึงข้อมูลอัตโนมัติจาก Issue #${{ github.event.issue.number }}
+            **เกม:** ${{ steps.extract.outputs.gameName }}
+            **ลิงก์ดาวน์โหลด:** ${{ steps.extract.outputs.link }}
           labels: "mod-update"
 
       - name: Close Issue
