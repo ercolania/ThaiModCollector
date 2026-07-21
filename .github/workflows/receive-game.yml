@@ -1,0 +1,146 @@
+name: Receive Game Submission
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  process-game-submission:
+    if: contains(github.event.issue.labels.*.name, 'game-submission')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # ---------------------------------------------------------
+      # Fetches Steam's own metadata (name/reviews/price/genres) for the
+      # submitted appId and adds it straight to official.json.
+      #
+      # Deliberately does NOT check data.type === "game" or
+      # data.supported_languages — confirmed unreliable for many apps on
+      # Steam's side. Whether this is actually a game page (not software/DLC/
+      # a soundtrack) was already verified client-side via the breadcrumb DOM
+      # check before the submission was ever sent, so that part is trusted.
+      # ---------------------------------------------------------
+      - name: Fetch Steam metadata and add to official.json
+        id: process
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            const body = context.payload.issue.body || '';
+            const field = (label) => {
+              const m = body.match(new RegExp(`\\*\\*${label}:\\*\\*\\s*(.+)`));
+              return m ? m[1].trim() : null;
+            };
+
+            const gameName = field('ชื่อเกม') || 'Unknown Game';
+            const appIdRaw = field('App ID เกม');
+
+            if (!appIdRaw || !/^\d+$/.test(appIdRaw)) {
+              core.setFailed('❌ Could not extract a valid App ID from the issue body');
+              return;
+            }
+            const appId = Number(appIdRaw);
+            core.setOutput('gameName', gameName);
+            core.setOutput('appId', String(appIdRaw));
+
+            const official = JSON.parse(fs.readFileSync('data/official.json', 'utf8'));
+            const modded = JSON.parse(fs.readFileSync('data/modded.json', 'utf8'));
+
+            if (official.some(g => g[0] === appId) || modded.some(g => g[0] === appId)) {
+              core.setOutput('outcome', 'duplicate');
+              return;
+            }
+
+            const genresPath = 'data/genres.json';
+            const genres = JSON.parse(fs.readFileSync(genresPath, 'utf8'));
+
+            let data = null;
+            try {
+              const url = `https://store.steampowered.com/api/appdetails?appids=${appId}&cc=th&l=thai`;
+              const res = await fetch(url);
+              if (res.ok) {
+                const json = await res.json();
+                const entry = json[String(appId)];
+                if (entry && entry.success && entry.data) data = entry.data;
+              }
+            } catch (err) {
+              console.log(`⚠️ Steam API fetch failed for appId ${appId}: ${err.message}`);
+            }
+
+            if (!data) {
+              core.setOutput('outcome', 'fetch-failed');
+              return;
+            }
+
+            const reviews = data.recommendations?.total ?? 0;
+            const price = data.is_free ? 0 : (data.price_overview?.final ?? 0) / 100;
+            const genreIds = (data.genres || []).map(g => {
+              const id = Number(g.id);
+              if (!genres[String(id)]) genres[String(id)] = g.description;
+              return id;
+            });
+
+            official.push([appId, data.name || gameName, reviews, price, genreIds]);
+            // Sort by review count, most-reviewed first — matches the default
+            // "ยอดนิยม (รีวิว)" sort archive-modal.js already uses, so the raw
+            // file stays pre-sorted for that common case.
+            official.sort((a, b) => (b[2] ?? 0) - (a[2] ?? 0));
+
+            fs.writeFileSync('data/official.json', JSON.stringify(official, null, 2) + '\n');
+            fs.writeFileSync(genresPath, JSON.stringify(genres, null, 2) + '\n');
+
+            core.setOutput('outcome', 'added');
+
+      - name: Commit directly
+        if: steps.process.outputs.outcome == 'added'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Add ${{ steps.process.outputs.gameName }} (${{ steps.process.outputs.appId }}) to official.json [auto-merged]"
+          file_pattern: 'data/official.json data/genres.json'
+
+      - name: Comment — added
+        if: steps.process.outputs.outcome == 'added'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number,
+              body: '✅ Added to official.json using data fetched from the Steam Store API.'
+            });
+
+      - name: Comment — duplicate
+        if: steps.process.outputs.outcome == 'duplicate'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number,
+              body: '⚠️ This game is already in the catalog — no changes made.'
+            });
+
+      - name: Comment — fetch failed
+        if: steps.process.outputs.outcome == 'fetch-failed'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number,
+              body: "⚠️ Couldn't fetch this app's data from the Steam Store API — leaving this issue open, please retry later or add it manually."
+            });
+
+      - name: Close issue (added / duplicate only — leave open on fetch failure for retry)
+        if: steps.process.outputs.outcome == 'added' || steps.process.outputs.outcome == 'duplicate'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.update({
+              owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number,
+              state: 'closed'
+            });
