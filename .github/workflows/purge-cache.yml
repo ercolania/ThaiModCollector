@@ -5,18 +5,18 @@ on:
     branches:
       - main
     paths:
-      - 'mods.json'
+      - 'data/links.json'
 
 jobs:
   purge:
     runs-on: ubuntu-latest
     steps:
-      - name: 🚀 Purge CDN Cache
+      - name: Purge CDN cache
         run: |
-          echo "⏳ รอให้เซิร์ฟเวอร์หลักของ GitHub อัปเดตไฟล์ (3 นาที)..."
+          echo "Waiting for GitHub's origin server to update (3 min)..."
           sleep 180
-          
-          echo "กำลังสั่งล้างแคชบน jsDelivr..."
-          curl -s https://purge.jsdelivr.net/gh/ercolania/ThaiModCollector@main/mods.json
-          
-          echo "ล้างแคชเรียบร้อย! ผู้ใช้จะได้ข้อมูลใหม่ทันที"
+
+          echo "Purging jsDelivr cache..."
+          curl -s https://purge.jsdelivr.net/gh/ercolania/ThaiModCollector@main/links.json
+
+          echo "Cache purged — users will get fresh data immediately."
