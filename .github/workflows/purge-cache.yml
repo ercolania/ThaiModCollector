@@ -17,6 +17,6 @@ jobs:
           sleep 180
 
           echo "Purging jsDelivr cache..."
-          curl -s https://purge.jsdelivr.net/gh/ercolania/ThaiModCollector@main/links.json
+          curl -s https://purge.jsdelivr.net/gh/ercolania/ThaiModCollector@main/data/links.json
 
           echo "Cache purged — users will get fresh data immediately."
