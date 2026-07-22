@@ -17,11 +17,16 @@
     [205100, [[1, null, "https://www.nexusmods.com/dishonored/mods/193"]]],
     [206440, [[1, null, "https://www.nexusmods.com/tothemoon/mods/2"]]],
     [208650, [[1, null, "https://www.nexusmods.com/batmanarkhamknight/mods/3114"]]],
-    [213670, [[1, null, "https://www.mediafire.com/file/dfrtuj6u53o10tr/SP_The_Stick_of_Truth_THAI.rar/file"]]],
+    [213670,
+      [
+        [1, null, "https://www.mediafire.com/file/dfrtuj6u53o10tr/SP_The_Stick_of_Truth_THAI.rar/file"],
+        [2, null, "https://1drv.ms/u/c/3b122d335f858c14/EciqxEJgoI9Mp5BpX4JCXsoB-7UuRESJ0nwApteGDRnZ_Q?e=agBbaD"]
+      ]
+    ],
     [214490, [[1, null, "https://www.nexusmods.com/alienisolation/mods/170"]]],
     [219990, [[1, null, "https://www.nexusmods.com/grimdawn/mods/224"]]],
     [220440, [[1, null, "https://www.nexusmods.com/dmcdevilmaycry/mods/243"]]],
-    [221040, [[1, null, "https://sites.google.com/view/re6-thai-by-community-th"]]],
+    [221040, [[1, null, "https://www.nexusmods.com/residentevil6/mods/571"]]],
     [228300, [[1, null, "https://www.nexusmods.com/rememberme/mods/41"]]],
     [232090, [[1, null, "https://kf2thl.github.io/"]]],
     [233290, [[1, null, "https://www.nexusmods.com/murderedsoulsuspect/mods/2?tab=description"]]],
