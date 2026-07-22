@@ -66,9 +66,14 @@
     [383870, [[1, null, "https://modthai-en0va.com/mods/opksiYnKCkkaovJVTf0z/firewatch"]]],
     [391220, [[1, null, "https://www.nexusmods.com/riseofthetombraider/mods/128"]]],
     [394360, [[1, null, "https://steamcommunity.com/sharedfiles/filedetails/?id=1729555797"]]],
-    [405310, [[1, null, "https://www.nexusmods.com/legomarvelsavengers/mods/29?fbclid=IwY2xjawSbrSNleHRuA2FlbQIxMABicmlkETEwS2h5TElFTUJZSE9taHRPc3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHqSa6W4Da2bzP6G1CIEUgwwQ_ghgHoEjVeHe4Vu88ogaqmYSaW4sMJdGIVZE_aem_DfjzEqNwHYXNzjZYKPAa2g"]]],
+    [405310, [[1, null, "https://www.nexusmods.com/legomarvelsavengers/mods/29"]]],
     [412830, [[1, null, "https://operationbifrost.com/steins-gate"]]],
-    [413150, [[1, null, "https://www.nexusmods.com/stardewvalley/mods/7052"]]],
+    [413150,
+      [
+        [1, null, "https://www.nexusmods.com/stardewvalley/mods/7052"],
+        [3, null, "https://www.nexusmods.com/stardewvalley/mods/28691"]
+      ]
+    ],
     [413410, [[1, null, "https://drive.google.com/drive/folders/1-L_MRqhH-dpYbIMkhWdLg9jH-tJuFpw7"]]],
     [414700, [[1, null, "https://www.mediafire.com/file/g6v7vc5xu35gepz/OUTLAST2_Tha.rar/file"]]],
     [427290, [[1, null, "https://www.nexusmods.com/vampyr/mods/68"]]],
@@ -209,7 +214,7 @@
     [1593500, [[1, null, "https://www.nexusmods.com/godofwar/mods/368"]]],
     [1601580, [[1, null, "https://www.patreon.com/posts/frostpunk-2-ew-1-112478242"]]],
     [1627720, [[1, null, "https://www.nexusmods.com/liesofp/mods/85"]]],
-    [1643320, [[1, null, "https://www.nexusmods.com/stalker2heartofchornobyl/mods/2288?fbclid=IwY2xjawSquGNleHRuA2FlbQIxMABicmlkETFZbWNjMHRMMEZSQk9hTVlmc3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHgX9axizZAAHQkV3di0HuId118YdV8wMLm8AWIjW62U5GwJAt-P27mio0VD__aem_aB7k25uPdaxQQUaqM-M_Hg"]]],
+    [1643320, [[1, null, "https://www.nexusmods.com/stalker2heartofchornobyl/mods/2288"]]],
     [1645820, [[1, null, "https://sites.google.com/view/modthaiyaklongplae/ดาวนโหลดมอด/SurrounDead?authuser=0"]]],
     [1649010, [[1, null, "https://www.nexusmods.com/miasmachronicles/mods/5"]]],
     [1649950, [[1, null, "https://sites.google.com/view/modthaiyaklongplae/ดาวนโหลดมอด/news-town"]]],
