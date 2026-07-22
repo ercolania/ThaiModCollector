@@ -33,6 +33,16 @@ jobs:
           script: |
             const fs = require('fs');
 
+            // Writes a games array as one compact line per game — e.g.
+            // [730, "Counter-Strike 2", 5174842, 0, [1, 37]] — instead of the
+            // standard JSON.stringify(x, null, 2) output, which spreads every
+            // nested array element across its own line and is much harder to
+            // skim through by eye.
+            function formatGameArray(games) {
+              const lines = games.map(g => '  ' + JSON.stringify(g).replace(/,(?!\s)/g, ', '));
+              return '[\n' + lines.join(',\n') + '\n]\n';
+            }
+
             const body = context.payload.issue.body || '';
             const field = (label) => {
               const m = body.match(new RegExp(`\\*\\*${label}:\\*\\*\\s*(.+)`));
@@ -93,7 +103,7 @@ jobs:
             // file stays pre-sorted for that common case.
             official.sort((a, b) => (b[2] ?? 0) - (a[2] ?? 0));
 
-            fs.writeFileSync('data/official.json', JSON.stringify(official, null, 2) + '\n');
+            fs.writeFileSync('data/official.json', formatGameArray(official));
             fs.writeFileSync(genresPath, JSON.stringify(genres, null, 2) + '\n');
 
             core.setOutput('outcome', 'added');

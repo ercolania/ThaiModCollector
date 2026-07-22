@@ -21,6 +21,16 @@ jobs:
           script: |
             const fs = require('fs');
 
+            // Writes a games array as one compact line per game — e.g.
+            // [730, "Counter-Strike 2", 5174842, 0, [1, 37]] — instead of the
+            // standard JSON.stringify(x, null, 2) output, which spreads every
+            // nested array element across its own line and is much harder to
+            // skim through by eye.
+            function formatGameArray(games) {
+              const lines = games.map(g => '  ' + JSON.stringify(g).replace(/,(?!\s)/g, ', '));
+              return '[\n' + lines.join(',\n') + '\n]\n';
+            }
+
             // Genre entries this repo already knows about, keyed by Steam's genre id.
             // New genre ids encountered below get appended here automatically.
             const genresPath = 'data/genres.json';
@@ -78,7 +88,7 @@ jobs:
                 // just got their real numbers filled in land in the right rank
                 // instead of staying at their original insertion position.
                 games.sort((a, b) => (b[2] ?? 0) - (a[2] ?? 0));
-                fs.writeFileSync(path, JSON.stringify(games, null, 2) + '\n');
+                fs.writeFileSync(path, formatGameArray(games));
               }
               return updatedCount;
             }
