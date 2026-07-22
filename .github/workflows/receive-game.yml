@@ -58,7 +58,7 @@ jobs:
               return;
             }
 
-            const genresPath = 'data/genres.json';
+            const genresPath = 'data/genre.json';
             const genres = JSON.parse(fs.readFileSync(genresPath, 'utf8'));
 
             let data = null;
