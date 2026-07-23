@@ -2,7 +2,14 @@
   "last_updated": "2026-07-12T12:22:40Z",
   "schemaVersion": 2,
   "mods": [
+    [6000, [[1, null, "https://www.facebook.com/GoodGameTeller/photos/a.585890228755797/585890372089116/"]]],
     [17330, [[1, null, "https://www.facebook.com/GoodGameTeller/photos/a.585890228755797/607580299920123/"]]],
+    [17390,
+      [
+        [1, null, "https://www.mediafire.com/file/ftrfbh63pax0m7f/changeSPtoTH.zip/"],
+        [1, null, "https://www.facebook.com/GoodGameTeller/photos/a.585890228755797/585890515422435/"]
+      ]
+    ],
     [19680, [[1, null, "https://www.nexusmods.com/alicemadnessreturns/mods/64"]]],
     [22380, [[1, null, "https://drive.google.com/file/d/1yINm38py72l0S4P4LCoCOH1Ut5mPlE1Y/edit"]]],
     [32330, [[1, null, "https://www.nexusmods.com/legoindianajonestheoriginaladventures/mods/8"]]],
@@ -39,6 +46,7 @@
     [234140, [[1, null, "https://modthai-en0va.com/mods/5mHl6ab6dzBa8wZqCOuz/mad-max"]]],
     [238320, [[1, null, "https://www.mediafire.com/file/aos6pr8m3mvx2i7/OUTLAST_Tha.rar/file"]]],
     [240760, [[1, null, "https://www.nexusmods.com/wasteland2/mods/108"]]],
+    [241930, [[1, null, "https://www.nexusmods.com/middleearthshadowofmordor/mods/11"]]],
     [242760, [[1, null, "https://www.nexusmods.com/theforest/mods/16"]]],
     [243470, [[1, null, "https://www.nexusmods.com/watchdogs/mods/276"]]],
     [245470, [[1, null, "https://langugamesth.blogspot.com/2020/09/Democracy3ModThai.html"]]],
@@ -47,7 +55,7 @@
     [262060,
       [
         [1, null, "https://steamcommunity.com/sharedfiles/filedetails/?id=3739407399"],
-        [2, null, "https://steamcommunity.com/sharedfiles/filedetails/?id=3385058966"]
+        [1, null, "https://steamcommunity.com/sharedfiles/filedetails/?id=3385058966"]
       ]
     ],
     [264710, [[1, null, "https://www.facebook.com/paredaitranslate/posts/pfbid0Gechd3zC8iiao65JbkPFXL8Y2XyPHoWWo6anrorxMtEebR7Mna2mA9qL3emweaR7l"]]],
@@ -62,6 +70,7 @@
     [292120, [[1, null, "https://www.nexusmods.com/finalfantasy13/mods/62"]]],
     [292140, [[1, null, "https://www.nexusmods.com/finalfantasyxiii2/mods/39"]]],
     [298110, [[1, null, "https://www.info-meawtion.com/app/mods-Far-cry-4"]]],
+    [302670, [[1, null, "https://steamcommunity.com/sharedfiles/filedetails/?id=1928779020"]]],
     [307670, [[1, null, "https://www.nexusmods.com/hardwest/mods/2"]]],
     [307690, [[1, null, "https://www.nexusmods.com/sleepingdogsdefinitiveedition/mods/36"]]],
     [311560, [[1, null, "https://www.nexusmods.com/assassinscreedrogue/mods/170"]]],
@@ -83,6 +92,7 @@
     [391220, [[1, null, "https://www.nexusmods.com/riseofthetombraider/mods/128"]]],
     [394360, [[1, null, "https://steamcommunity.com/sharedfiles/filedetails/?id=1729555797"]]],
     [405310, [[1, null, "https://www.nexusmods.com/legomarvelsavengers/mods/29"]]],
+    [405710, [[1, null, "https://steamcommunity.com/sharedfiles/filedetails/?id=1279238675"]]],
     [412830, [[1, null, "https://operationbifrost.com/steins-gate"]]],
     [413150,
       [
@@ -137,6 +147,7 @@
     [677120, [[1, null, "https://steamcommunity.com/sharedfiles/filedetails/?id=1391151417"]]],
     [678960, [[1, null, "https://www.nexusmods.com/codevein/mods/796"]]],
     [686060, [[1, null, "https://www.facebook.com/groups/1229416909010391/posts/1377790447506369"]]],
+    [686200, [[1, null, "https://steamcommunity.com/sharedfiles/filedetails/?id=2464651170"]]],
     [702050, [[1, null, "https://sites.google.com/view/vn-th-translate/home/song-of-saya"]]],
     [703080, [[1, null, "https://www.youtube.com/watch?v=Ey2dWNMzd-s"]]],
     [714120, [[1, null, "https://www.facebook.com/share/p/19HoQXLDFG/"]]],
@@ -153,6 +164,7 @@
     [816090, [[1, null, "https://www.nexusmods.com/spacehulkdeathwing/mods/60"]]],
     [821250, [[1, null, "https://www.patreon.com/posts/145811218"]]],
     [826940, [[1, null, "https://www.nexusmods.com/maidofsker/mods/2"]]],
+    [842100, [[1, null, "https://www.nexusmods.com/daymare1998/mods/2"]]],
     [848450, [[1, null, "https://www.facebook.com/paredaitranslate/posts/pfbid0Gechd3zC8iiao65JbkPFXL8Y2XyPHoWWo6anrorxMtEebR7Mna2mA9qL3emweaR7l"]]],
     [868360, [[1, null, "https://www.nexusmods.com/projecthospital/mods/12"]]],
     [870780, [[1, null, "https://www.patreon.com/posts/control-100-phr-114229796"]]],
