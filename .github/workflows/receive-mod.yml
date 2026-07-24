@@ -1,0 +1,271 @@
+name: Receive Mod Submission
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  process-submission:
+    if: contains(github.event.issue.labels.*.name, 'mod-submission') || contains(github.event.issue.labels.*.name, 'broken-link')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # ---------------------------------------------------------
+      # Extract fields, validate, and decide: auto-merge or PR.
+      # Kept in one script step (instead of many jq one-liners) because
+      # the decision logic needs several small checks together — host
+      # allow-list, existing catalog metadata, idempotency, and
+      # translator name resolution/dedup — that read more clearly as
+      # real code than as chained jq filters.
+      # ---------------------------------------------------------
+      - name: Extract, validate, and mutate data files
+        id: process
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            // Only these hosts are trusted enough to auto-merge without a human
+            // reviewing the link first. Anything else always goes to a PR.
+            const HOST_ALLOWLIST = [
+              'nexusmods.com', 'www.nexusmods.com',
+              'github.com', 'www.github.com',
+              'drive.google.com',
+              'sites.google.com',
+              'docs.google.com'
+            ];
+
+            const body = context.payload.issue.body || '';
+            const isReport = context.payload.issue.labels.some(l => l.name === 'broken-link');
+            const isSubmission = context.payload.issue.labels.some(l => l.name === 'mod-submission');
+
+            const field = (label) => {
+              const m = body.match(new RegExp(`\\*\\*${label}:\\*\\*\\s*(.+)`));
+              return m ? m[1].trim() : null;
+            };
+
+            const gameName = field('ชื่อเกม') || 'Unknown Game';
+            const appIdRaw = field('App ID เกม');
+            const link = field('ลิงก์ดาวน์โหลด');
+            const reportedLink = field('ลิงก์ที่รายงาน');
+            const modTypeRaw = field('ประเภทม็อด'); // e.g. "1 (แปลไทย)" — parseInt below reads the leading number
+            const translatorName = field('ชื่อผู้แปล');
+            const reason = field('เหตุผล');
+
+            if (!appIdRaw || !/^\d+$/.test(appIdRaw)) {
+              core.setFailed('❌ Could not extract a valid App ID from the issue body');
+              return;
+            }
+            const appId = Number(appIdRaw);
+
+            core.setOutput('gameName', gameName);
+            core.setOutput('appId', String(appId));
+            core.setOutput('reason', reason || '');
+
+            const isUrgent = context.payload.issue.labels.some(l => l.name === 'security-urgent');
+            core.setOutput('prLabels', isUrgent ? 'mod-update,security-urgent' : 'mod-update');
+
+            const links = JSON.parse(fs.readFileSync('data/links.json', 'utf8'));
+            const official = JSON.parse(fs.readFileSync('data/official.json', 'utf8'));
+            const modded = JSON.parse(fs.readFileSync('data/modded.json', 'utf8'));
+
+            const catalogHasGame = (id) =>
+              official.some(g => g[0] === id) || modded.some(g => g[0] === id);
+
+            // ---------------------------------------------------------
+            // Report flow: removing content is always higher-risk than
+            // adding it (spam-reporting a legitimate mod is an easy attack),
+            // so this always goes to a PR for manual review — no auto-merge path.
+            // ---------------------------------------------------------
+            if (isReport) {
+              const entry = links.mods.find(([id]) => id === appId);
+              const linkExists = entry ? entry[1].some(([, , l]) => l === reportedLink) : false;
+
+              if (!entry || !reportedLink || !linkExists) {
+                core.setOutput('autoMerge', 'false');
+                core.setOutput('changed', 'false');
+                core.setOutput('notFound', 'true');
+                return;
+              }
+
+              entry[1] = entry[1].filter(([, , l]) => l !== reportedLink);
+              if (entry[1].length === 0) {
+                links.mods = links.mods.filter(([id]) => id !== appId);
+              }
+              links.last_updated = new Date().toISOString().replace(/\.\d+Z$/, 'Z');
+              fs.writeFileSync('data/links.json', JSON.stringify(links, null, 2) + '\n');
+
+              core.setOutput('autoMerge', 'false');
+              core.setOutput('changed', 'true');
+              return;
+            }
+
+            // ---------------------------------------------------------
+            // Submission flow
+            // ---------------------------------------------------------
+            if (!isSubmission || !link) {
+              core.setFailed('❌ Missing required fields for a mod submission');
+              return;
+            }
+
+            // modTypeRaw looks like "1 (แปลไทย)" — parseInt reads the leading number
+            // and ignores the rest, unlike Number() which would return NaN.
+            let modType = parseInt(modTypeRaw, 10);
+            if (!Number.isInteger(modType) || modType < 1 || modType > 6) modType = 1; // fallback: "แปลไทย"
+
+            // --- Resolve translator name -> id, with fuzzy dedup ---
+            const translators = JSON.parse(fs.readFileSync('data/translators.json', 'utf8'));
+            const normalize = (s) => s.trim().toLowerCase().replace(/\s+/g, ' ');
+
+            let translatorId = null;
+            // appscript.js writes the literal text "ไม่ระบุ" when no translator name
+            // was given — treat that as "none", not as an actual translator name.
+            if (translatorName && translatorName.trim() && translatorName.trim() !== 'ไม่ระบุ') {
+              const target = normalize(translatorName);
+              const existingId = Object.entries(translators).find(([, name]) => normalize(name) === target)?.[0];
+              if (existingId) {
+                translatorId = Number(existingId);
+              } else {
+                const nextId = Math.max(0, ...Object.keys(translators).map(Number)) + 1;
+                translators[String(nextId)] = translatorName.trim();
+                fs.writeFileSync('data/translators.json', JSON.stringify(translators, null, 2) + '\n');
+                translatorId = nextId;
+              }
+            }
+
+            // --- Auto-merge eligibility checks (must pass ALL) ---
+            let host = null;
+            try { host = new URL(link).hostname.replace(/^www\./, ''); } catch { /* invalid URL handled below */ }
+
+            const hostTrusted = host && HOST_ALLOWLIST.some(h => host === h.replace(/^www\./, ''));
+            const gameKnown = catalogHasGame(appId);
+
+            const existingEntry = links.mods.find(([id]) => id === appId);
+            const linkAlreadyExists = existingEntry ? existingEntry[1].some(([, , l]) => l === link) : false;
+
+            const eligibleForAutoMerge = hostTrusted && gameKnown && !linkAlreadyExists;
+
+            if (linkAlreadyExists) {
+              core.setOutput('autoMerge', 'false');
+              core.setOutput('changed', 'false');
+              core.setOutput('duplicate', 'true');
+              return;
+            }
+
+            // Game not yet in the catalog: add a placeholder entry so the nightly
+            // Enrich Game Metadata workflow can pick it up and fill in real
+            // name/reviews/price/genres from the Steam Store API. Safe to do
+            // unconditionally — the only attacker-controlled value here is
+            // appId, which is already validated as numeric.
+            // Shape matches modded.json's real schema: [appId, name, reviews, price, genres]
+            // — no "type" field here; archive-modal.js tags official/mod in memory
+            // when it merges official.json + modded.json, so it must not be baked
+            // into the raw file itself.
+            if (!gameKnown) {
+              const moddedGames = JSON.parse(fs.readFileSync('data/modded.json', 'utf8'));
+              moddedGames.push([appId, null, null, null, []]);
+              fs.writeFileSync('data/modded.json', JSON.stringify(moddedGames, null, 2) + '\n');
+            }
+
+            const newModTuple = [modType, translatorId, link];
+            if (existingEntry) {
+              existingEntry[1].push(newModTuple);
+            } else {
+              links.mods.push([appId, [newModTuple]]);
+            }
+            links.last_updated = new Date().toISOString().replace(/\.\d+Z$/, 'Z');
+            fs.writeFileSync('data/links.json', JSON.stringify(links, null, 2) + '\n');
+
+            core.setOutput('autoMerge', eligibleForAutoMerge ? 'true' : 'false');
+            core.setOutput('changed', 'true');
+            core.setOutput('duplicate', 'false');
+
+      # ---------------------------------------------------------
+      # Auto-merge path: commit straight to main, no PR needed.
+      # ---------------------------------------------------------
+      - name: Commit directly (auto-merge path)
+        if: steps.process.outputs.autoMerge == 'true'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Add mod for ${{ steps.process.outputs.gameName }} (${{ steps.process.outputs.appId }}) [auto-merged]"
+          file_pattern: 'data/links.json data/translators.json'
+
+      - name: Comment and close issue (auto-merge path)
+        if: steps.process.outputs.autoMerge == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: '✅ Auto-merged — the link passed all automatic checks (trusted host, known game, not a duplicate) and was added directly.'
+            });
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              state: 'closed'
+            });
+
+      # ---------------------------------------------------------
+      # Manual-review path: open a PR with the already-mutated files.
+      # Covers: reports (always), and submissions that failed any
+      # auto-merge check (untrusted host, unknown game, etc).
+      # ---------------------------------------------------------
+      - name: Create Pull Request (manual review path)
+        if: steps.process.outputs.autoMerge == 'false' && steps.process.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Update mod for ${{ steps.process.outputs.gameName }} (${{ steps.process.outputs.appId }})"
+          branch: "update-mod-${{ steps.process.outputs.appId }}-${{ github.event.issue.number }}"
+          title: "🤖 Update mod data: ${{ steps.process.outputs.gameName }} (${{ steps.process.outputs.appId }})"
+          body: |
+            Auto-generated from issue #${{ github.event.issue.number }}
+            ${{ steps.process.outputs.reason && format('**Report reason:** {0}', steps.process.outputs.reason) || '' }}
+            This did not qualify for auto-merge (untrusted host, unknown game, or a removal) — please review before merging.
+          labels: ${{ steps.process.outputs.prLabels }}
+
+      - name: Comment duplicate notice
+        if: steps.process.outputs.duplicate == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: '⚠️ This exact link is already in our database for this game — no changes made.'
+            });
+
+      - name: Comment not-found notice (report path)
+        if: steps.process.outputs.notFound == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: "⚠️ Couldn't find this exact link on file for this game — it may have already been removed. No changes made."
+            });
+
+      - name: Close issue (manual-review / duplicate path)
+        if: steps.process.outputs.autoMerge == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              state: 'closed'
+            });
