@@ -54,6 +54,14 @@ jobs:
               return `{\n  "last_updated": ${JSON.stringify(links.last_updated)},\n  "schemaVersion": ${links.schemaVersion},\n  "mods": [\n${entryLines.join(',\n')}\n  ]\n}\n`;
             };
 
+            // Writes a games array (modded.json's schema) as one compact line
+            // per game — e.g. [730, "Counter-Strike 2", 5174842, 0, [1, 37]] —
+            // instead of standard JSON.stringify(x, null, 2) output.
+            const formatGameArray = (games) => {
+              const lines = games.map(g => '  ' + JSON.stringify(g).replace(/,(?!\s)/g, ', '));
+              return '[\n' + lines.join(',\n') + '\n]\n';
+            };
+
             // Only these hosts are trusted enough to auto-merge without a human
             // reviewing the link first. Anything else always goes to a PR.
             const HOST_ALLOWLIST = [
@@ -181,19 +189,47 @@ jobs:
               return;
             }
 
-            // Game not yet in the catalog: add a placeholder entry so the nightly
-            // Enrich Game Metadata workflow can pick it up and fill in real
-            // name/reviews/price/genres from the Steam Store API. Safe to do
-            // unconditionally — the only attacker-controlled value here is
-            // appId, which is already validated as numeric.
+            // Game not yet in the catalog: look it up on Steam and add it now.
             // Shape matches modded.json's real schema: [appId, name, reviews, price, genres]
             // — no "type" field here; archive-modal.js tags official/mod in memory
             // when it merges official.json + modded.json, so it must not be baked
-            // into the raw file itself.
+            // into the raw file itself. If the Steam fetch fails, fall back to a
+            // null-filled placeholder so the nightly Enrich Game Metadata workflow
+            // can pick it up later — same safety net as before.
             if (!gameKnown) {
               const moddedGames = JSON.parse(fs.readFileSync('data/modded.json', 'utf8'));
-              moddedGames.push([appId, null, null, null, []]);
-              fs.writeFileSync('data/modded.json', JSON.stringify(moddedGames, null, 2) + '\n');
+              const genresPath = 'data/genres.json';
+              const genres = JSON.parse(fs.readFileSync(genresPath, 'utf8'));
+
+              let steamData = null;
+              try {
+                const url = `https://store.steampowered.com/api/appdetails?appids=${appId}&cc=th&l=thai`;
+                const res = await fetch(url);
+                if (res.ok) {
+                  const json = await res.json();
+                  const entry = json[String(appId)];
+                  if (entry && entry.success && entry.data) steamData = entry.data;
+                }
+              } catch (err) {
+                console.log(`⚠️ Steam API fetch failed for appId ${appId}: ${err.message}`);
+              }
+
+              const reviews = steamData ? (steamData.recommendations?.total ?? 0) : null;
+              const price = steamData ? (steamData.is_free ? 0 : (steamData.price_overview?.final ?? 0) / 100) : null;
+              const genreIds = (steamData?.genres || []).map(g => {
+                const id = Number(g.id);
+                if (!genres[String(id)]) genres[String(id)] = g.description;
+                return id;
+              });
+
+              moddedGames.push([appId, steamData?.name || gameName, reviews, price, genreIds]);
+              // Sort by review count, most-reviewed first — matches the default
+              // "ยอดนิยม (รีวิว)" sort archive-modal.js already uses, so the raw
+              // file stays pre-sorted for that common case.
+              moddedGames.sort((a, b) => (b[2] ?? 0) - (a[2] ?? 0));
+
+              fs.writeFileSync('data/modded.json', formatGameArray(moddedGames));
+              fs.writeFileSync(genresPath, JSON.stringify(genres, null, 2) + '\n');
             }
 
             const newModTuple = [modType, translatorId, link];
