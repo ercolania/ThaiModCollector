@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-12T12:22:40Z",
+  "last_updated": "2026-07-24T15:15:16Z",
   "schemaVersion": 2,
   "mods": [
     [6000, [[1, null, "https://www.facebook.com/GoodGameTeller/photos/a.585890228755797/585890372089116/"]]],
@@ -172,6 +172,12 @@
     [748490, [[1, null, "https://www.nexusmods.com/thelegendofheroestrailsofcoldsteel2/mods/3"]]],
     [752590, [[1, null, "https://www.patreon.com/posts/151939480"]]],
     [753640, [[1, null, "https://outerwildsmods.com/mods/outerwildsthaitranslation/"]]],
+    [760060,
+      [
+        [1, null, "https://www.nexusmods.com/mutantyearzeroroadtoeden/mods/2"],
+        [1, null, "https://www.nexusmods.com/stardewvalley/mods/7052"]
+      ]
+    ],
     [761620, [[1, null, "https://simscolony.github.io/Beholder_TH/"]]],
     [770390, [[1, null, "https://www.nexusmods.com/draugen/mods/2"]]],
     [774361, [[1, null, "https://modthai-en0va.com/mods/WaX2Sf7OifEGSQ5cuQHF/blasphemous"]]],
@@ -191,7 +197,6 @@
     [892970, [[1, null, "https://sites.google.com/view/valheimth"]]],
     [897220, [[1, null, "https://sites.google.com/view/vn-th-translate/home/summer-pockets"]]],
     [914800, [[1, null, "https://sites.google.com/view/transladethai/available-mods/coffee-talk-thai-mod"]]],
-    [760060, [[1, null, "https://www.nexusmods.com/mutantyearzeroroadtoeden/mods/2"]]],
     [916840, [[1, null, "https://www.patreon.com/posts/137692856"]]],
     [921570, [[1, null, "https://sites.google.com/view/madamrose/หนาแรก"]]],
     [921800, [[1, null, "https://modthai-en0va.com/mods/87ni2UEW0OOMVUPIQZt0/encased"]]],
