@@ -32,6 +32,28 @@ jobs:
           script: |
             const fs = require('fs');
 
+            // ---------------------------------------------------------
+            // data/links.json uses a custom "compact-per-entry" format
+            // (not plain JSON.stringify output): single-link mods stay on
+            // one line, multi-link mods span several lines, and entries
+            // are always sorted by appId. This formatter is used ONLY for
+            // links.json — other data files keep standard JSON.stringify.
+            // ---------------------------------------------------------
+            const formatModTuple = ([modType, translatorId, link]) =>
+              `[${modType}, ${translatorId === null ? 'null' : translatorId}, ${JSON.stringify(link)}]`;
+
+            const formatLinksJson = (links) => {
+              const sortedMods = [...links.mods].sort((a, b) => a[0] - b[0]);
+              const entryLines = sortedMods.map(([appId, mods]) => {
+                if (mods.length === 1) {
+                  return `    [${appId}, [${formatModTuple(mods[0])}]]`;
+                }
+                const inner = mods.map(m => `        ${formatModTuple(m)}`).join(',\n');
+                return `    [${appId},\n      [\n${inner}\n      ]\n    ]`;
+              });
+              return `{\n  "last_updated": ${JSON.stringify(links.last_updated)},\n  "schemaVersion": ${links.schemaVersion},\n  "mods": [\n${entryLines.join(',\n')}\n  ]\n}\n`;
+            };
+
             // Only these hosts are trusted enough to auto-merge without a human
             // reviewing the link first. Anything else always goes to a PR.
             const HOST_ALLOWLIST = [
@@ -100,7 +122,7 @@ jobs:
                 links.mods = links.mods.filter(([id]) => id !== appId);
               }
               links.last_updated = new Date().toISOString().replace(/\.\d+Z$/, 'Z');
-              fs.writeFileSync('data/links.json', JSON.stringify(links, null, 2) + '\n');
+              fs.writeFileSync('data/links.json', formatLinksJson(links));
 
               core.setOutput('autoMerge', 'false');
               core.setOutput('changed', 'true');
@@ -181,7 +203,7 @@ jobs:
               links.mods.push([appId, [newModTuple]]);
             }
             links.last_updated = new Date().toISOString().replace(/\.\d+Z$/, 'Z');
-            fs.writeFileSync('data/links.json', JSON.stringify(links, null, 2) + '\n');
+            fs.writeFileSync('data/links.json', formatLinksJson(links));
 
             core.setOutput('autoMerge', eligibleForAutoMerge ? 'true' : 'false');
             core.setOutput('changed', 'true');
