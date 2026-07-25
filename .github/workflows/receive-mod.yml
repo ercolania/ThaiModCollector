@@ -24,6 +24,12 @@ jobs:
       # allow-list, existing catalog metadata, idempotency, and
       # translator name resolution/dedup — that read more clearly as
       # real code than as chained jq filters.
+      #
+      # NOTE: this step no longer stamps data/links.json's last_updated
+      # field. Stamping now happens only at actual merge time:
+      #   - auto-merge path -> "Stamp last_updated (auto-merge path)" step below
+      #   - manual-review (PR) path -> stamp-on-merge.yml, triggered when the
+      #     PR is merged on GitHub
       # ---------------------------------------------------------
       - name: Extract, validate, and mutate data files
         id: process
@@ -129,7 +135,8 @@ jobs:
               if (entry[1].length === 0) {
                 links.mods = links.mods.filter(([id]) => id !== appId);
               }
-              links.last_updated = new Date().toISOString().replace(/\.\d+Z$/, 'Z');
+              // last_updated is stamped at actual merge time by stamp-on-merge.yml,
+              // not here — this flow always goes through the manual-review (PR) path.
               fs.writeFileSync('data/links.json', formatLinksJson(links));
 
               core.setOutput('autoMerge', 'false');
@@ -238,7 +245,11 @@ jobs:
             } else {
               links.mods.push([appId, [newModTuple]]);
             }
-            links.last_updated = new Date().toISOString().replace(/\.\d+Z$/, 'Z');
+            // last_updated is stamped at actual merge time:
+            //   - auto-merge path -> stamped in the dedicated step below, right
+            //     before the direct commit
+            //   - manual-review (PR) path -> stamped by stamp-on-merge.yml when
+            //     the PR is merged on GitHub
             fs.writeFileSync('data/links.json', formatLinksJson(links));
 
             core.setOutput('autoMerge', eligibleForAutoMerge ? 'true' : 'false');
@@ -247,7 +258,35 @@ jobs:
 
       # ---------------------------------------------------------
       # Auto-merge path: commit straight to main, no PR needed.
+      # Stamp last_updated right here, immediately before the commit,
+      # so the timestamp reflects the actual merge time.
       # ---------------------------------------------------------
+      - name: Stamp last_updated (auto-merge path)
+        if: steps.process.outputs.autoMerge == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            const formatModTuple = ([modType, translatorId, link]) =>
+              `[${modType}, ${translatorId === null ? 'null' : translatorId}, ${JSON.stringify(link)}]`;
+
+            const formatLinksJson = (links) => {
+              const sortedMods = [...links.mods].sort((a, b) => a[0] - b[0]);
+              const entryLines = sortedMods.map(([appId, mods]) => {
+                if (mods.length === 1) {
+                  return `    [${appId}, [${formatModTuple(mods[0])}]]`;
+                }
+                const inner = mods.map(m => `        ${formatModTuple(m)}`).join(',\n');
+                return `    [${appId},\n      [\n${inner}\n      ]\n    ]`;
+              });
+              return `{\n  "last_updated": ${JSON.stringify(links.last_updated)},\n  "schemaVersion": ${links.schemaVersion},\n  "mods": [\n${entryLines.join(',\n')}\n  ]\n}\n`;
+            };
+
+            const links = JSON.parse(fs.readFileSync('data/links.json', 'utf8'));
+            links.last_updated = new Date().toISOString().replace(/\.\d+Z$/, 'Z');
+            fs.writeFileSync('data/links.json', formatLinksJson(links));
+
       - name: Commit directly (auto-merge path)
         if: steps.process.outputs.autoMerge == 'true'
         uses: stefanzweifel/git-auto-commit-action@v5
@@ -277,6 +316,8 @@ jobs:
       # Manual-review path: open a PR with the already-mutated files.
       # Covers: reports (always), and submissions that failed any
       # auto-merge check (untrusted host, unknown game, etc).
+      # last_updated is NOT stamped here — stamp-on-merge.yml stamps it
+      # when this PR is actually merged.
       # ---------------------------------------------------------
       - name: Create Pull Request (manual review path)
         if: steps.process.outputs.autoMerge == 'false' && steps.process.outputs.changed == 'true'

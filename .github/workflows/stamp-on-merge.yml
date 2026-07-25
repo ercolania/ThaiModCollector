@@ -1,0 +1,54 @@
+name: Stamp last_updated on PR merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  stamp:
+    # branch ตั้งชื่อ update-mod-{appId}-{issueNumber} โดย receive-mod-submission.yml
+    # เช็คทั้ง merged == true และ prefix ของ branch กันไป stamp ตอน PR อื่นที่ไม่เกี่ยวถูกปิด/merge
+    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'update-mod-')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main (post-merge)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Stamp last_updated
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            const formatModTuple = ([modType, translatorId, link]) =>
+              `[${modType}, ${translatorId === null ? 'null' : translatorId}, ${JSON.stringify(link)}]`;
+
+            const formatLinksJson = (links) => {
+              const sortedMods = [...links.mods].sort((a, b) => a[0] - b[0]);
+              const entryLines = sortedMods.map(([appId, mods]) => {
+                if (mods.length === 1) {
+                  return `    [${appId}, [${formatModTuple(mods[0])}]]`;
+                }
+                const inner = mods.map(m => `        ${formatModTuple(m)}`).join(',\n');
+                return `    [${appId},\n      [\n${inner}\n      ]\n    ]`;
+              });
+              return `{\n  "last_updated": ${JSON.stringify(links.last_updated)},\n  "schemaVersion": ${links.schemaVersion},\n  "mods": [\n${entryLines.join(',\n')}\n  ]\n}\n`;
+            };
+
+            const links = JSON.parse(fs.readFileSync('data/links.json', 'utf8'));
+            links.last_updated = new Date().toISOString().replace(/\.\d+Z$/, 'Z');
+            fs.writeFileSync('data/links.json', formatLinksJson(links));
+
+      - name: Commit stamp
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Stamp last_updated after merge (#${{ github.event.pull_request.number }}) [skip ci]"
+          file_pattern: 'data/links.json'
+          # ป้องกัน commit นี้ trigger workflow อื่นที่ไล่ตาม push (ถ้ามี)
