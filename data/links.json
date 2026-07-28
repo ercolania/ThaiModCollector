@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-12T12:22:40Z",
+  "last_updated": "2026-07-28T16:04:48Z",
   "schemaVersion": 2,
   "mods": [
     [220, [[1, null, "https://www.nexusmods.com/halflife2/mods/105"]]],
@@ -493,7 +493,12 @@
     [1587540, [[1, null, "https://sites.google.com/view/modthaiyaklongplae/ดาวนโหลดมอด/Anvil-Saga"]]],
     [1588550, [[1, null, "https://www.nexusmods.com/cairn/mods/9"]]],
     [1592110, [[1, null, "https://sites.google.com/view/modthaiyaklongplae/ดาวนโหลดมอด/Spirit-Of-The-Island"]]],
-    [1593500, [[1, null, "https://www.nexusmods.com/godofwar/mods/368"]]],
+    [1593500,
+      [
+        [1, null, "https://www.nexusmods.com/godofwar/mods/368"],
+        [1, null, "https://www.nexusmods.com/godofwar/mods/269"]
+      ]
+    ],
     [1599330, [[1, null, "https://sites.google.com/view/modthaiyaklongplae/ดาวนโหลดมอด/Wildmender"]]],
     [1601580, [[1, null, "https://www.patreon.com/posts/frostpunk-2-ew-1-112478242"]]],
     [1602080, [[1, null, "https://www.nexusmods.com/soulstice/mods/1"]]],
