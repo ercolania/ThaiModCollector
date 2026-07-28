@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-28T16:04:48Z",
+  "last_updated": "2026-07-28T16:05:21Z",
   "schemaVersion": 2,
   "mods": [
     [220, [[1, null, "https://www.nexusmods.com/halflife2/mods/105"]]],
@@ -500,7 +500,12 @@
       ]
     ],
     [1599330, [[1, null, "https://sites.google.com/view/modthaiyaklongplae/ดาวนโหลดมอด/Wildmender"]]],
-    [1601580, [[1, null, "https://www.patreon.com/posts/frostpunk-2-ew-1-112478242"]]],
+    [1601580,
+      [
+        [1, null, "https://www.patreon.com/posts/frostpunk-2-ew-1-112478242"],
+        [1, null, "https://www.nexusmods.com/frostpunk2/mods/54"]
+      ]
+    ],
     [1602080, [[1, null, "https://www.nexusmods.com/soulstice/mods/1"]]],
     [1606180, [[1, null, "https://www.facebook.com/share/v/1922ae9s6S/"]]],
     [1607680, [[1, null, "https://hamstersquad.github.io/mods/bread-and-fred.html"]]],
