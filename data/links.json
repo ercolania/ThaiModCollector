@@ -769,7 +769,12 @@
     [2909400, [[1, null, "https://www.nexusmods.com/finalfantasy7rebirth/mods/2138"]]],
     [2918090, [[1, null, "https://www.nexusmods.com/fearthetimeloop/mods/3"]]],
     [2943280, [[2, null, "https://sites.google.com/view/modthaiyaklongplae/ดาวนโหลดมอด/DustlandDelivery"]]],
-    [2947440, [[1, null, "https://sites.google.com/view/abaranger/mod/silent-hill-f"]]],
+    [2947440,
+      [
+        [1, null, "https://sites.google.com/view/abaranger/mod/silent-hill-f"],
+        [3, null, "https://www.facebook.com/share/p/1HdBg5dF2C/"]
+      ]
+    ],
     [2958970, [[1, null, "https://www.nexusmods.com/thethingremastered/mods/2"]]],
     [2966320, [[2, null, "https://sites.google.com/view/modthaiyaklongplae/ดาวนโหลดมอด/starsans-island"]]],
     [2975460, [[2, null, "https://sites.google.com/view/modthaiyaklongplae/ดาวนโหลดมอด/Farmers-Shop-Simulator"]]],
