@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-30T13:06:47Z",
+  "last_updated": "2026-07-30T13:52:05Z",
   "schemaVersion": 2,
   "mods": [
     [220, [[1, null, "https://www.nexusmods.com/halflife2/mods/105"]]],
@@ -614,7 +614,12 @@
     [1931730, [[1, null, "https://www.nexusmods.com/fortsolis/mods/2"]]],
     [1934570, [[1, null, "https://www.nexusmods.com/southofmidnight/mods/20"]]],
     [1940340, [[1, null, "https://sites.google.com/view/modthaiyaklongplae/ดาวนโหลดมอด/darkest-dungeon-ii"]]],
-    [1941540, [[1, null, "https://mega.nz/file/dQhCAbRS#AA5S_g6394E9wj5vkXsmVpTMOWZ9qKQRS568P2mx16k"]]],
+    [1941540,
+      [
+        [1, null, "https://mega.nz/file/dQhCAbRS#AA5S_g6394E9wj5vkXsmVpTMOWZ9qKQRS568P2mx16k"],
+        [1, null, "https://sites.google.com/view/modthaiyaklongplae/%E0%B8%94%E0%B8%B2%E0%B8%A7%E0%B8%99%E0%B9%82%E0%B8%AB%E0%B8%A5%E0%B8%94%E0%B8%A1%E0%B8%AD%E0%B8%94/Mafia-The-Old-Country"]
+      ]
+    ],
     [1944430, [[1, null, "https://steamcommunity.com/sharedfiles/filedetails/?id=3609511379"]]],
     [1947910, [[1, null, "https://dteesongteungjanorn.blogspot.com/2026/04/opus-prism-peak.html?m=1"]]],
     [1949030, [[1, null, "https://www.nexusmods.com/sherlockholmestheawakened/mods/6"]]],
