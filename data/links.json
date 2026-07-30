@@ -334,7 +334,12 @@
     [1105670, [[1, null, "https://steamcommunity.com/sharedfiles/filedetails/?id=2883811995"]]],
     [1110910, [[1, null, "https://www.nexusmods.com/mortalshell/mods/2"]]],
     [1113000, [[1, null, "https://www.nexusmods.com/persona4golden/mods/44"]]],
-    [1115690, [[1, null, "https://www.patreon.com/posts/137692689"]]],
+    [1115690,
+      [
+        [1, null, "https://www.patreon.com/posts/137692689"],
+        [1, null, "https://www.patreon.com/posts/yes-your-grace-m-130149708"]
+      ]
+    ],
     [1118520, [[1, null, "https://www.patreon.com/posts/paralives-99-ew-159201493"]]],
     [1119730, [[1, null, "https://sites.google.com/view/modthaiyaklongplae/ดาวนโหลดมอด/Ranch-Simulator"]]],
     [1121640, [[1, null, "https://sites.google.com/view/layzitranslator"]]],
