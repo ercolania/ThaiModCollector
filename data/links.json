@@ -229,7 +229,12 @@
     [703080, [[1, null, "https://www.youtube.com/watch?v=Ey2dWNMzd-s"]]],
     [704850, [[1, null, "https://www.nexusmods.com/thiefsimulator/mods/1"]]],
     [705620, [[1, null, "https://www.nexusmods.com/hellmut/mods/1"]]],
-    [714120, [[1, null, "https://www.facebook.com/share/p/19HoQXLDFG/"]]],
+    [714120,
+      [
+        [1, null, "https://www.facebook.com/share/p/19HoQXLDFG/"],
+        [1, null, "https://www.mediafire.com/file/34pt7y969vj5gwk"]
+      ]
+    ],
     [719040, [[1, null, "https://www.nexusmods.com/wasteland3/mods/54"]]],
     [730390, [[1, null, "https://www.nexusmods.com/rajianancientepic/mods/1"]]],
     [740130, [[1, null, "https://www.nexusmods.com/talesofarise/mods/342"]]],
