@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-30T07:43:22Z",
+  "last_updated": "2026-07-30T08:53:13Z",
   "schemaVersion": 2,
   "mods": [
     [220, [[1, null, "https://www.nexusmods.com/halflife2/mods/105"]]],
@@ -547,7 +547,12 @@
     [1681430, [[1, null, "https://1drv.ms/f/s!AmhhTp1AgaOIjEKwc3hA5ugcTUFp?e=ivJwaE"]]],
     [1683100, [[1, null, "https://sites.google.com/view/layzitranslator"]]],
     [1684350, [[1, null, "https://www.nexusmods.com/thethaumaturge/mods/12"]]],
-    [1687950, [[1, null, "https://www.patreon.com/posts/sinsudkaarr-kh-y-138346712"]]],
+    [1687950,
+      [
+        [1, null, "https://www.patreon.com/posts/sinsudkaarr-kh-y-138346712"],
+        [1, null, "https://www.nexusmods.com/persona5royal/mods/22"]
+      ]
+    ],
     [1693980, [[1, null, "https://www.nexusmods.com/deadspace2023/mods/14"]]],
     [1696440, [[1, null, "https://sites.google.com/view/modthaiyaklongplae/ดาวนโหลดมอด/the-matchless-kungfu"]]],
     [1698960, [[1, null, "https://mega.nz/file/pGoWFbbS#zADZEwqpyM_Sv9It0UqRPWarC82tl_MMNn5CMYP5lCM"]]],
