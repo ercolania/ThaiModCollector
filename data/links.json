@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-30T08:58:00Z",
+  "last_updated": "2026-07-30T13:06:47Z",
   "schemaVersion": 2,
   "mods": [
     [220, [[1, null, "https://www.nexusmods.com/halflife2/mods/105"]]],
@@ -679,7 +679,12 @@
     [2272900, [[1, null, "https://sites.google.com/view/modthaiyaklongplae/ดาวนโหลดมอด/Mirthwood"]]],
     [2274620, [[1, null, "https://sites.google.com/view/modthaiyaklongplae/ดาวนโหลดมอด/Discounty"]]],
     [2280390, [[1, null, "https://sites.google.com/view/modthaiyaklongplae/ดาวนโหลดมอด/Tennis-Manager-2023"]]],
-    [2285550, [[1, null, "https://sites.google.com/view/modthaiyaklongplae/%E0%B8%94%E0%B8%B2%E0%B8%A7%E0%B8%99%E0%B9%82%E0%B8%AB%E0%B8%A5%E0%B8%94%E0%B8%A1%E0%B8%AD%E0%B8%94/doloc-town"]]],
+    [2285550,
+      [
+        [1, null, "https://sites.google.com/view/modthaiyaklongplae/%E0%B8%94%E0%B8%B2%E0%B8%A7%E0%B8%99%E0%B9%82%E0%B8%AB%E0%B8%A5%E0%B8%94%E0%B8%A1%E0%B8%AD%E0%B8%94/doloc-town"],
+        [1, null, "https://sites.google.com/view/modthaiyaklongplae/%E0%B8%94%E0%B8%B2%E0%B8%A7%E0%B8%99%E0%B9%82%E0%B8%AB%E0%B8%A5%E0%B8%94%E0%B8%A1%E0%B8%AD%E0%B8%94/lakeburg-legacies"]
+      ]
+    ],
     [2305370, [[1, null, "https://www.nexusmods.com/eastward/mods/1"]]],
     [2353060, [[1, null, "https://www.nexusmods.com/invinciblevs/mods/84"]]],
     [2356560, [[1, null, "https://www.nexusmods.com/monsterhunterstories/mods/2"]]],
