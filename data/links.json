@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-30T13:52:05Z",
+  "last_updated": "2026-08-01T09:33:52Z",
   "schemaVersion": 2,
   "mods": [
     [220, [[1, null, "https://www.nexusmods.com/halflife2/mods/105"]]],
@@ -282,7 +282,12 @@
     [892970, [[1, null, "https://sites.google.com/view/valheimth"]]],
     [894020, [[1, null, "https://www.nexusmods.com/deathsdoor/mods/1"]]],
     [897220, [[1, null, "https://sites.google.com/view/vn-th-translate/home/summer-pockets"]]],
-    [911400, [[1, null, "https://www.nexusmods.com/assassinscreediiiremastered/mods/53"]]],
+    [911400,
+      [
+        [1, null, "https://www.nexusmods.com/assassinscreediiiremastered/mods/53"],
+        [2, null, "https://www.nexusmods.com/assassinscreediiiremastered/mods/180"]
+      ]
+    ],
     [914800, [[1, null, "https://sites.google.com/view/transladethai/available-mods/coffee-talk-thai-mod"]]],
     [916840, [[1, null, "https://www.patreon.com/posts/137692856"]]],
     [921570, [[1, null, "https://sites.google.com/view/madamrose/หนาแรก"]]],
