@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-08-04T15:04:32Z",
+  "last_updated": "2026-08-04T15:10:51Z",
   "schemaVersion": 2,
   "mods": [
     [220, [[1, null, "https://www.nexusmods.com/halflife2/mods/105"]]],
@@ -852,7 +852,12 @@
     [3287520, [[1, null, "https://www.nexusmods.com/ninjagaiden2black/mods/170"]]],
     [3313720, [[2, null, "https://sites.google.com/view/modthaiyaklongplae/ดาวนโหลดมอด/psychic-kung-fu-master"]]],
     [3321460, [[1, null, "https://www.nexusmods.com/crimsondesert/mods/91"]]],
-    [3357650, [[1, null, "https://www.nexusmods.com/pragmata/mods/169"]]],
+    [3357650,
+      [
+        [1, null, "https://www.nexusmods.com/pragmata/mods/169"],
+        [1, null, "https://www.nexusmods.com/pragmata/mods/2"]
+      ]
+    ],
     [3371770, [[1, null, "https://www.nexusmods.com/funguysswarm/mods/1"]]],
     [3372710, [[1, null, "https://sites.google.com/view/modthaiyaklongplae/ดาวนโหลดมอด/noble-legacy"]]],
     [3375780, [[1, null, "https://www.nexusmods.com/trailsintheskyfirstchapter/mods/66"]]],
