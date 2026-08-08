@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-08-04T15:10:51Z",
+  "last_updated": "2026-08-08T08:23:41Z",
   "schemaVersion": 2,
   "mods": [
     [220, [[1, null, "https://www.nexusmods.com/halflife2/mods/105"]]],
@@ -261,7 +261,12 @@
     [774361, [[1, null, "https://modthai-en0va.com/mods/WaX2Sf7OifEGSQ5cuQHF/blasphemous"]]],
     [774861, [[1, null, "https://www.nexusmods.com/projectwinter/mods/1"]]],
     [779340, [[1, null, "https://www.patreon.com/posts/116679208"]]],
-    [780310, [[1, null, "https://modthai-en0va.com/mods/KrwwfuaMGIhu46fVGEZm/the-riftbreaker"]]],
+    [780310,
+      [
+        [1, null, "https://modthai-en0va.com/mods/KrwwfuaMGIhu46fVGEZm/the-riftbreaker"],
+        [1, null, "https://www.nexusmods.com/theriftbreaker/mods/273"]
+      ]
+    ],
     [787480, [[1, null, "https://www.facebook.com/translatekordai/posts/259306720320557"]]],
     [793460, [[1, null, "https://www.mediafire.com/file/h4xp1j5ft8u8h9q/Operator_112_Data.rar/file"]]],
     [794960, [[1, null, "https://www.nexusmods.com/thesojourn/mods/1"]]],
