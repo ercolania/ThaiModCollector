@@ -858,7 +858,12 @@
     [2975460, [[2, null, "https://sites.google.com/view/modthaiyaklongplae/ดาวนโหลดมอด/Farmers-Shop-Simulator"]]],
     [2989180, [[1, null, "https://www.nexusmods.com/darwinsparadox/mods/5"]]],
     [2989950, [[1, null, "https://www.nexusmods.com/thebathhouse/mods/1"]]],
-    [3008130, [[1, null, "https://github.com/pygmymarmoset928/dying-light-the-beast-thai"]]],
+    [3008130,
+      [
+        [1, null, "https://github.com/pygmymarmoset928/dying-light-the-beast-thai"],
+        [1, null, "https://999modthai.netlify.app/"]
+      ]
+    ],
     [3011560, [[1, null, "https://www.facebook.com/share/p/1JdtdQszkt/"]]],
     [3020510, [[2, null, "https://sites.google.com/view/modthaiyaklongplae/ดาวนโหลดมอด/legend-of-heroes-three-kingdoms"]]],
     [3031890, [[1, null, "https://sites.google.com/view/mamathod/มอด/acts-of-blood#h.yohrzlvigrlr"]]],
